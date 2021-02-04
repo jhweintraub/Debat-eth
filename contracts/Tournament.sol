@@ -3,14 +3,15 @@
 
 pragma solidity ^0.8.0;
 import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/master/contracts/token/ERC721/ERC721.sol";
-
-
+import "./Users.sol";
+import "./Round.sol";
 
 contract Tournament {
     
     uint256 public num_prelims;
     address payable tabDirector;
-    Team[] teamList;
+    Users.Team[] teamList;
+    Users.Judge[] judges;
     
     address public first_verifier;
     bool private first_person_verified = false;
@@ -26,23 +27,9 @@ contract Tournament {
     bool hasConcluded = false;
     ERC721 public trophies;
     
-    struct Debater {
-        string name;
-        address payable addr;
-        uint totalSpeaks;
-        uint[] speaks;
-    }
+    Round[] public rounds;
     
     
-    struct Team {
-        Debater debater1;
-        Debater debater2;
-        
-        string teamCode;
-        uint totalSpeaks;
-        uint wins;
-        
-    }
     
     
     
@@ -56,12 +43,19 @@ contract Tournament {
         second_verifier = _second_verifier;
     }
     
-   function register(string memory teamCode, Debater memory _debater1, Debater memory _debater2) public payable {
+   function registerTeam(string memory teamCode, Users.Debater memory _debater1, Users.Debater memory _debater2) public payable {
         require(msg.value >= registration_fee, "Your registration_fee was too low.");
 
-        teamList.push(Team(_debater1, _debater2, teamCode, 0.0, 0.0));
+        teamList.push(Users.Team(_debater1, _debater2, teamCode, 0.0, 0.0));
         
    }
+   
+   function registerJudge(address payable judgeAddr, string memory _name, Users.Team[] memory conflicts, uint roundCommitment) public returns(Users.Judge memory) {
+       Users.Judge memory _judge = Users.Judge(payable(judgeAddr), _name, conflicts, roundCommitment);
+       judges.push(_judge);
+       return _judge;
+   }
+   
    
    function startRound(int256 roundNum) onlyTabDirector public {
        
