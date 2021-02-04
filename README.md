@@ -1,4 +1,4 @@
-#Debat-eth
+# Debat-eth
 
 Ethereum Platform enabled Version of Tabroom.com for Running Debate Tournaments. I'm not intended for this to ever replace Tabroom.com but at the moment I think of it as a veritable PoC  just to show off what the technology is capable of.
 
