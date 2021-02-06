@@ -21,7 +21,7 @@ As of right now I am working on the initial contracts. If you're interested in h
 ### Do I get a trophy if I win?
 
 Yes! Debat-eth supports Custom ERC721-Enabled Trophy Tokens. What is that? Imagine a digitized Trophy completely unique and personalized and sent to the address you register for the tournament with. It's sent automatically at the end of the tournament, designed by the Tournament Director, and tradeable to other wallets. Want to have a personal wallet where your team stores all it's tokens for the world to see? You can do that!
-[What is an ERC721 Token?] (https://eips.ethereum.org/EIPS/eip-721)
+[What is an ERC721 Token?](https://eips.ethereum.org/EIPS/eip-721)
 
 ### Why should I use it over Tabroom.com
 
