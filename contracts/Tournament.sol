@@ -34,13 +34,15 @@ contract Tournament {
     
     
     constructor(address payable _tabDirector, uint256 _num_prelims, uint _registration_fee, 
-    string memory _tournament_name, address _first_verifier, address _second_verifier) {
+    string memory _tournament_name, string memory _trophy_abbrev, address _first_verifier, address _second_verifier) {
         num_prelims = _num_prelims;
         registration_fee = _registration_fee;
         tournamentName = _tournament_name;
         tabDirector = _tabDirector;
         first_verifier = _first_verifier;
         second_verifier = _second_verifier;
+        
+        trophies = new ERC721(append(_tournament_name), _trophy_abbrev);
     }
     
    function registerTeam(string memory teamCode, Users.Debater memory _debater1, Users.Debater memory _debater2) public payable {
@@ -85,10 +87,8 @@ contract Tournament {
    
    function verify() public onlyVerifiers {
        if (msg.sender == first_verifier) first_person_verified = true;
-       else second_person_verified = true;
+       else if (msg.sender == second_verifier) second_person_verified = true;
    }
-   
-   
    
    
    modifier onlyVerifiers {
@@ -110,6 +110,7 @@ contract Tournament {
         _;
     }
     
-    
-
+    function append(string memory a) internal pure returns (string memory) {
+        return string(abi.encodePacked(a, " Trophy"));
+    }
 }

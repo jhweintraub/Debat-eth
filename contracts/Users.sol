@@ -27,6 +27,14 @@ library Users {
         uint roundsRemaining;
     }
     
+    function compareTeams(Team memory _team1, Team memory _team2) public pure returns (bool) {
+        
+        //You Only need to compare one field because no two-teams with the same name would be registered Simultaneously
+        if (keccak256(abi.encodePacked(_team1.teamCode)) == keccak256(abi.encodePacked(_team2.teamCode))) return true;
+        else return false;
+        
+    }
+    
     
     
     
