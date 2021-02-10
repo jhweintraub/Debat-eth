@@ -1,6 +1,5 @@
 pragma solidity ^0.8.0;
 
-import "./Round.sol";
 import "./Users.sol";
 
 contract Debate {
@@ -8,9 +7,11 @@ contract Debate {
     Users.Team affTeam;
     Users.Team negTeam;
     
-    address[] public judge_addrs;
-    mapping(address => Users.Judge) public judges;
+    mapping(address => bool) public judges;
+    mapping(address => string) public judge_names;
     
+    
+    uint public numJudges;
     Users.Team winner;
     string roomNumber;
     bool roundOngoing = false;
@@ -18,21 +19,32 @@ contract Debate {
     address roundContract;
     
     uint private ballotsOutstanding;
+    
+    uint affBallots = 0;
+    uint negBallots = 0;
    
-   struct rfd {
-       Users.Team winner;
-       string decision;
-   }
+  struct rfd {
+      Users.Team winner;
+      string decision;
+      string judgeName;
+  }
     
     mapping(address => rfd) decisions;
     
     
+    //Events
+    event ballotSubmitted(string judgeName, string _decision, Users.Team winner);
+    event winnerDetermined(Users.Team _winner, uint affBallots, uint negBallots);
+    
     
     bool isElimRound = false;
     
-    constructor(Users.Team memory _aff_team, Users.Team memory _neg_team, Users.Judge[] memory _judges, string memory _roomNumber, address _tournamentContract) {
+    constructor(Users.Team memory _aff_team, Users.Team memory _neg_team, Users.Judge[] memory _judges, 
+    string memory _roomNumber, address _tournamentContract) {
         affTeam = _aff_team;
         negTeam = _neg_team;
+        
+        numJudges = _judges.length;
         
         ballotsOutstanding = _judges.length;
         
@@ -41,7 +53,9 @@ contract Debate {
         tournamentContract = _tournamentContract;
         
         for(uint x = 0; x < _judges.length; x++) {
-            judges[_judges[x].judgeAddr] = _judges[x];
+        
+            judges[_judges[x].judgeAddr] = true;
+            judge_names[_judges[x].judgeAddr] = _judges[x].name;
         }//for
         
         
@@ -57,35 +71,40 @@ contract Debate {
     function submitBallot(Users.Judge memory judge, string memory _decision, Users.Team memory _winner) 
     onlyJudges public returns(string memory) {
         
+          
+        decisions[msg.sender] = rfd(_winner, _decision, judge_names[msg.sender]);
         
-        //TODO - Create System for determining the winner in elim rounds cause rn the first judge 2 submit decides the winner
-       
-        
-        
-        
-        decisions[msg.sender] = rfd(_winner, _decision);
+        //Emit Ballot to the blockchain
+        emit ballotSubmitted(judge_names[msg.sender], _decision, _winner);
         
         ballotsOutstanding--;
         
-        if (ballotsOutstanding == 0) winner = calculateWinner();
+        if (ballotsOutstanding == 0) {
+            
+            winner = calculateWinner();
+            emit winnerDetermined(winner, affBallots, negBallots);
+        }
+        
         
         return decisions[msg.sender].decision;
         
     }
     
     function calculateWinner() internal returns (Users.Team memory) {
-        uint affBallots = 0;
-        uint negBallots = 0;
-        for(uint x = 0; x < judge_addrs.length; x++) {
-           if (Users.compareTeams(decisions[judge_addrs[x]].winner, affTeam)) affBallots++; 
-           else negBallots++;
+        for(uint x = 0; x < numJudges; x++) {
+            
+          if (Users.compareTeams(decisions[msg.sender].winner, affTeam)) affBallots++; 
+          else negBallots++;
         }
         
+       
+        // if (isElimRound) emit winnerDetermined()
         
-        if (affBallots > judge_addrs.length/2) return affTeam;
+        if (affBallots > numJudges/2) return affTeam;
         else return negTeam;
         
     }
+    
     
     
     
@@ -94,7 +113,7 @@ contract Debate {
     }
     
     modifier onlyJudges {
-        require(judges[msg.sender].judgeAddr != address(0x0));
+        require(judges[msg.sender] == true);
         _;
     }
 }

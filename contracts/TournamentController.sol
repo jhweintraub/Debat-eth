@@ -8,13 +8,14 @@ import "./Tournament.sol";
 contract TournamentController {
     
     uint public numOpenTournaments;
-    Tournament[] tournaments;
+    Tournament[] public _tournaments;
     
     /*
     TODO
     */
     constructor() {
-        
+        _tournaments = new Tournament[](10);
+        numOpenTournaments = 0;
     }
     
     
@@ -24,17 +25,11 @@ contract TournamentController {
             payable(msg.sender), _num_prelims, _registration_fee, _tournament_name, _first_verifier, _second_verifier
         );
         
-        tournaments.push(newTournament);
+        _tournaments.push(newTournament);
+        numOpenTournaments++;
+        
         return address(newTournament);
         
     }
   
-   
-    
-    
-    
-    
-    
-    
-    
 }

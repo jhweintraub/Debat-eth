@@ -20,10 +20,12 @@ library Users {
         
     }
     
+    
+    //TODO: Add conflicts - I had it in but it was causing weird compiler problems with reference passing so I took it out just to compile
     struct Judge {
         address payable judgeAddr;
         string name;
-        Team[] conflicts;
+        // Team[] conflicts;
         uint roundsRemaining;
     }
     
@@ -35,6 +37,13 @@ library Users {
         
     }
     
+    function append(string memory a, string memory b) public returns (string memory) {
+        return string(abi.encodePacked(a, b));
+    }
+    
+    function append(string memory a, string memory b, string memory c) public returns (string memory) {
+        return string(abi.encodePacked(a, b, c));
+    }
     
     
     
