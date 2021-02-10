@@ -1,4 +1,6 @@
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.6;
+pragma abicoder v2;
+
 
 library Users {
     
@@ -37,11 +39,11 @@ library Users {
         
     }
     
-    function append(string memory a, string memory b) public returns (string memory) {
+    function append(string memory a, string memory b) public pure returns (string memory) {
         return string(abi.encodePacked(a, b));
     }
     
-    function append(string memory a, string memory b, string memory c) public returns (string memory) {
+    function append(string memory a, string memory b, string memory c) public pure returns (string memory) {
         return string(abi.encodePacked(a, b, c));
     }
     

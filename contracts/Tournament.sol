@@ -1,9 +1,11 @@
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.6;
+pragma abicoder v2;
 import "./Users.sol";
 import "./Round.sol";
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.3.0/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract Tournament {
+
+contract Tournament is ERC721 {
     
     
     uint256 public num_prelims;
@@ -28,7 +30,7 @@ contract Tournament {
     Round[] public rounds;
     
     constructor(address payable _tabDirector, uint256 _num_prelims, uint _registration_fee, 
-    string memory _tournament_name, address _first_verifier, address _second_verifier) {
+    string memory _tournament_name, address _first_verifier, address _second_verifier) ERC721("TESTING", "TEST") {
         num_prelims = _num_prelims;
         registration_fee = _registration_fee;
         tournamentName = _tournament_name;
